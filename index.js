@@ -14,7 +14,6 @@ import {
 const PORT = 3099;
 const app = express();
 
-
 app.use(express.json());
 
 app.use("/", loginRoutes);
