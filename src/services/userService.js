@@ -13,16 +13,24 @@ export const getUsers = async id => {
 };
 
 export const addUser = async ({
+    id,
     login,
     password,
     age
 }) => {
     return User.create({
+        id,
         login,
         password,
         age
     }, {
         fields: ["login", "password", "age"]
+    },
+    {
+        include: [{
+            model: Group,
+            as: 'groups'
+        }]
     });
 };
 
