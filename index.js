@@ -1,6 +1,7 @@
 import express from "express";
 import usersRoutes from "./src/routes/routers.js";
 import groupRoutes from "./src/routes/group-routers.js";
+import loginRoutes from "./src/routes/login-routers.js";
 
 import { UserGroup } from './src/database/models/GroupUser.js';
 import { Group } from './src/database/models/Group.js';
@@ -16,10 +17,11 @@ const app = express();
 
 app.use(express.json());
 
+app.use("/", loginRoutes);
 // /api/users/
-app.use("/users", usersRoutes);
+app.use("/api/users", usersRoutes);
 // /api/groups/
-app.use("/groups", groupRoutes);
+app.use("/api/groups", groupRoutes);
 
 User.belongsToMany(Group, {
     through: UserGroup,
