@@ -5,31 +5,46 @@ import {
     schemaValidation
 } from '../utilities/validator.js';
 
-import { addUser, getUsers, getUserById, getAutoSuggestUsers } from '../database/UsersDB.js';
+import { addUser, getUsers, getUserById, updateUserById, logicallyDeleteUserById } from '../services/userService.js';
 
 export const createUser = async (req, res) => {
-    const data = req.body;
+    try{
+        const data = req.body;
 
-    const schema = schemaValidation();
-    const validation = schema.validate(req.body);
+        const schema = schemaValidation();
+        const validation = schema.validate(req.body);
 
-    const users = {
-        ...data,
-        id: uuidv4()
-    }
+        const users = {
+            ...data,
+            id: uuidv4()
+        }
 
-    if (validation.error) {
-        res.status(400).send(validation.error.details[0].message);
-    } else {
-
-        await addUser(users);
-
-        res.send(validation);
-
+        if (validation.error) {
+            res.status(400).send(validation.error.details[0].message);
+        } else {
+            const newUser = await addUser(users);
+            if (newUser) {
+                return res.json({
+                    message: "User created successfully",
+                    data: newUser
+                });
+            }
+        }
+    }catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Something goes wrong",
+            data: {}
+        });
     }
 };
 
-export const getUser = async (req, res) => res.send(await getUsers());
+export const getUser = async (req, res) => {
+    const users = await getUsers();
+    return res.json({
+        data: users
+    });
+}
 
 export const findUser = async (req, res) => {
     const {
@@ -38,7 +53,7 @@ export const findUser = async (req, res) => {
 
     const user = await getUserById(id);
 
-    res.send(user);
+    return res.json(user);
 };
 
 export const deleteUser = async (req, res) => {
@@ -48,9 +63,18 @@ export const deleteUser = async (req, res) => {
 
     const user = await getUserById(id);
 
-    if (user) user.isDeleted = true;
-
-    res.send(`User with the id ${id} deleted from the database.`);
+    if (user) {
+        const deleteRowCount = await logicallyDeleteUserById(id);
+        return res.json({
+            message: 'User deleted successfully',
+            count: deleteRowCount
+        });
+    }
+    else{
+        return res.json({
+            message: 'User not found'
+        });
+    }
 };
 
 export const updateUser = async (req, res) => {
@@ -70,12 +94,22 @@ export const updateUser = async (req, res) => {
         res.status(400).send(validation.error.details[0].message);
     } else {
         const user = await getUserById(id);
+        if(!user){
+            return res.json({
+                message: 'User not found'
+            });
+        }
 
         if (login) user.login = login;
         if (password) user.password = password;
         if (age) user.age = age;
 
-        res.send(`User with the id ${id} has been updated`);
+        const updated = await updateUserById(id, user);
+
+        return res.json({
+            message: `User with the id ${id} has been updated`,
+            data: updated
+        });
     }
 };
 

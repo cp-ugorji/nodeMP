@@ -7,7 +7,6 @@ export const getUsers = () => Promise.resolve(users.filter(user => user.isDelete
 export const getUserById = async id => {
     const users = await getUsers();
     const user = users.find(user => user.id === id);
-
     return user;
 }
 
