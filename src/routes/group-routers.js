@@ -7,16 +7,20 @@ import {
     updateGroup,
 } from '../controllers/GroupController.js';
 
-// import { addUsersToGroup } from '../controllers/UserGroupController.js'
+// import { addUsersToGroup } from '../controllers/UserGroupController.js';
+
+import {
+    logParams
+} from '../log/logger.js';
 
 const router = express.Router();
 
-router.post('/', createGroup);
-router.get('/', getAllGroups);
+router.post('/', logParams, createGroup);
+router.get('/', logParams, getAllGroups);
 
-router.get('/:id', getOneGroup);
-router.delete('/:id', deleteGroup);
-router.put('/:id', updateGroup);
+router.get('/:id', logParams, getOneGroup);
+router.delete('/:id', logParams, deleteGroup);
+router.put('/:id', logParams, updateGroup);
 
 // router.post('/user-groups', addUsersToGroup);
 

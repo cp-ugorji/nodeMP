@@ -8,14 +8,18 @@ import {
     getSuggestLogin
 } from '../controllers/UserController.js';
 
+import {
+    logParams
+} from '../log/logger.js';
+
 const router = express.Router();
 
-router.get("/", getUser);
-router.get("/suggested-logins", getSuggestLogin);
-router.post("/", createUser);
+router.get("/", logParams, getUser);
+// router.get("/suggested-logins", getSuggestLogin);
+router.post("/", logParams, createUser);
 // /api/users/:userID
-router.get('/:id', findUser);
-router.delete('/:id', deleteUser);
-router.patch('/:id', updateUser);
+router.get('/:id', logParams, findUser);
+router.delete('/:id', logParams, deleteUser);
+router.patch('/:id', logParams, updateUser);
 
 export default router;

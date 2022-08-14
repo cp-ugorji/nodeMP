@@ -6,6 +6,10 @@ import { UserGroup } from './src/database/models/GroupUser.js';
 import { Group } from './src/database/models/Group.js';
 import { User } from './src/database/models/User.js';
 
+import {
+    logger,
+} from "./src/log/logger.js";
+
 const PORT = 3099;
 const app = express();
 
@@ -34,3 +38,8 @@ app.get("/", (req, res) => res.send("HOME PAGE"));
 app.listen(PORT, () =>
     console.log(`Server is Running on port: http://localhost:${PORT}`)
 );
+
+process.on("uncaughtException", e => {
+    console.log('uncaughtException')
+    logger.error(`Error in app: ${JSON.stringify(e)}`);
+});
