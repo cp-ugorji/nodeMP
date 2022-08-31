@@ -20,6 +20,7 @@ export const createUser = async (req, res) => {
         }
 
         if (validation.error) {
+            console.log(res)
             res.status(400).send(validation.error.details[0].message);
         } else {
             const newUser = await addUser(users);
